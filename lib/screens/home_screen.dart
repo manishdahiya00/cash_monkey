@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bitlabs/bitlabs.dart';
 import 'package:cash_monkey/screens/history_screen.dart';
 import 'package:cash_monkey/screens/profile_screen.dart';
