@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cash_monkey/utils/color_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -196,14 +197,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        _buildActionItem(Icons.privacy_tip, 'Privacy Policy'),
-        _buildActionItem(Icons.help, 'Terms and Conditions'),
-        _buildActionItem(Icons.contact_mail, 'Contact Us'),
+        _buildActionItem(Icons.privacy_tip, 'Privacy Policy', () async {
+          const url =
+              'https://cash-monkey-d4b1d5748d36.herokuapp.com/privacy.html';
+          if (!await launchUrl(Uri.parse(url))) {
+            throw 'Could not launch $url';
+          }
+        }),
+        _buildActionItem(Icons.help, 'Terms and Conditions', () async {
+          const url =
+              'https://cash-monkey-d4b1d5748d36.herokuapp.com/terms.html';
+          if (!await launchUrl(Uri.parse(url))) {
+            throw 'Could not launch $url';
+          }
+        }),
+        _buildActionItem(Icons.contact_mail, 'Contact Us', () async {
+          const url =
+              'https://cash-monkey-d4b1d5748d36.herokuapp.com/contact.html';
+          if (!await launchUrl(Uri.parse(url))) {
+            throw 'Could not launch $url';
+          }
+        }),
       ],
     );
   }
 
-  Widget _buildActionItem(IconData icon, String title) {
+  Widget _buildActionItem(IconData icon, String title, onTap) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -218,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
       trailing: const Icon(Icons.chevron_right, color: Colors.white70),
-      onTap: () {},
+      onTap: onTap(),
     );
   }
 }
