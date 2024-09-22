@@ -1,12 +1,12 @@
-import 'package:advertising_id/advertising_id.dart';
-import 'package:cash_monkey/screens/home_screen.dart';
 import 'package:cash_monkey/services/auth_service.dart';
 import 'package:cash_monkey/utils/color_theme.dart';
 import 'package:cash_monkey/utils/utils.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:advertising_id/advertising_id.dart';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cash_monkey/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -27,10 +27,11 @@ class LoginScreen extends StatelessWidget {
         "${allInfo["baseUrl"]}userSignup",
         data: data,
       );
-      print(response);
+
       if (response.statusCode == 201 && response.data["status"] == 200) {
         await _storeUserData(response.data);
 
+        // Call app open API after successful login
         await _callAppOpenAPI(allInfo);
 
         Navigator.pushReplacement(
@@ -86,7 +87,7 @@ class LoginScreen extends StatelessWidget {
     prefs.setString("name", data['name'].toString());
     prefs.setString("image", data['image'].toString());
     prefs.setString("email", data['email'].toString());
-    prefs.setString("referCode", data['referCode']);
+    prefs.setString("referCode", data['referCode'].toString());
   }
 
   Future<String> _getAdvertisingId() async {
@@ -120,8 +121,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<void> _storeUserData(Map<String, dynamic> data) async {
-    String userId = data['userId'] ?? '';
-    String token = data['securityToken'] ?? '';
+    String userId = data['userId']?.toString() ?? '';
+    String token = data['securityToken']?.toString() ?? '';
 
     if (userId.isNotEmpty && token.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -152,7 +153,7 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: size.height * 0.04),
               Text(
-                'Welcome to RewardBoy!',
+                'Welcome to Cash Monkey!',
                 style: TextStyle(
                   fontSize: size.width * 0.07,
                   color: Colors.white,
@@ -170,8 +171,8 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: size.height * 0.05),
               ElevatedButton.icon(
-                onPressed: () {
-                  handleSignIn(context);
+                onPressed: () async {
+                  await handleSignIn(context);
                 },
                 icon: const Icon(Icons.login, color: Colors.white, size: 24.0),
                 label: const Text(

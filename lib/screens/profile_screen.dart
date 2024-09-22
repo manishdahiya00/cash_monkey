@@ -237,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
       trailing: const Icon(Icons.chevron_right, color: Colors.white70),
-      onTap: onTap(),
+      onTap: onTap,
     );
   }
 }

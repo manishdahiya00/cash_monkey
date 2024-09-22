@@ -6,10 +6,9 @@ class AuthService {
   static Future<GoogleSignInAccount?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? user = await _googleSignIn.signIn();
-
       return user;
     } catch (error) {
-      print(error);
+      print("Sign-In error: $error");
       return null;
     }
   }
@@ -17,6 +16,8 @@ class AuthService {
   static Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
-    } catch (error) {}
+    } catch (error) {
+      print("Sign-Out error: $error");
+    }
   }
 }

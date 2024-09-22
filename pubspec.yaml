@@ -44,6 +44,7 @@ dependencies:
   advertising_id: ^2.7.1
   url_launcher: ^6.3.0
   bitlabs: ^2.2.9
+  flutter_custom_tabs: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ import 'package:cash_monkey/utils/color_theme.dart';
 import 'package:cash_monkey/utils/sizes.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs_lite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,6 +74,28 @@ class _MainContentState extends State<MainContent> {
       walletBalance = prefs.getString("walletBalance");
       userId = prefs.getString("userId") ?? "";
     });
+  }
+
+  void launchOfferwall(String appId, String userId) async {
+    await launchUrlInCustomTabs(
+      Uri.parse("https://wow.pubscale.com/?app_id=${appId}&user_id=${userId}"),
+    );
+  }
+
+  Future<void> launchUrlInCustomTabs(Uri uri) async {
+    final theme = Theme.of(context);
+    try {
+      await launchUrl(
+        uri,
+        options: LaunchOptions(
+          barColor: theme.colorScheme.surface,
+          onBarColor: theme.colorScheme.onSurface,
+          barFixingEnabled: false,
+        ),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -185,40 +208,45 @@ class _MainContentState extends State<MainContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 200,
-                      width: MediaQuery.sizeOf(context).width * 0.3,
-                      decoration: BoxDecoration(
-                        color: const Color(0xff141414),
-                        borderRadius: BorderRadius.circular(8),
-                        border: const Border(
-                          top: BorderSide(
-                            color: Color.fromARGB(255, 5, 234, 255),
+                    InkWell(
+                      onTap: () {
+                        launchOfferwall("54425380", userId);
+                      },
+                      child: Container(
+                        height: 200,
+                        width: MediaQuery.sizeOf(context).width * 0.3,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff141414),
+                          borderRadius: BorderRadius.circular(8),
+                          border: const Border(
+                            top: BorderSide(
+                              color: Color.fromARGB(255, 5, 234, 255),
+                            ),
+                            bottom: BorderSide(
+                              color: Color.fromARGB(255, 5, 234, 255),
+                            ),
+                            left: BorderSide(
+                              color: Color.fromARGB(255, 5, 234, 255),
+                            ),
+                            right: BorderSide(
+                              color: Color.fromARGB(255, 5, 234, 255),
+                            ),
                           ),
-                          bottom: BorderSide(
-                            color: Color.fromARGB(255, 5, 234, 255),
-                          ),
-                          left: BorderSide(
-                            color: Color.fromARGB(255, 5, 234, 255),
-                          ),
-                          right: BorderSide(
-                            color: Color.fromARGB(255, 5, 234, 255),
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/pubscale.png"),
                           ),
                         ),
-                        image: const DecorationImage(
-                          image: AssetImage("assets/images/pubscale.png"),
-                        ),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Text(
-                            "PUBSCALE",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Text(
+                              "PUBSCALE",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
