@@ -13,7 +13,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String? userId;
   String? name;
   String? email;
   String? image;
@@ -21,7 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      userId = prefs.getString("userId");
       name = prefs.getString("name");
       email = prefs.getString("email");
       image = prefs.getString("image");
@@ -102,8 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoItemWithCopy('User ID', userId ?? "****", context),
-              const Divider(color: Colors.white24, thickness: 1),
               _buildInfoItem('Email', email ?? "****"),
             ],
           ),

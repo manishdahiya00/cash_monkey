@@ -13,7 +13,7 @@ class OfferDetailScreen extends StatelessWidget {
       backgroundColor: ColorTheme.backgroundColor,
       appBar: AppBar(
         title: Text(
-          offer['title'],
+          offer['title'] ?? 'No Title',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -24,7 +24,7 @@ class OfferDetailScreen extends StatelessWidget {
         elevation: 4,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ class OfferDetailScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 32),
             Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(

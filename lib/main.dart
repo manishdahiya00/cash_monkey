@@ -5,6 +5,7 @@ import 'package:cash_monkey/screens/offers_screen.dart';
 import 'package:cash_monkey/screens/profile_screen.dart';
 import 'package:cash_monkey/screens/quiz_screen.dart';
 import 'package:cash_monkey/screens/refer_earn_screen.dart';
+import 'package:cash_monkey/screens/social_media_screen.dart';
 import 'package:cash_monkey/screens/splash_screen.dart';
 import 'package:cash_monkey/screens/wallet_screen.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         "/login": (context) => const LoginScreen(),
         "/quizes": (context) => const QuizScreen(),
         "/offers": (context) => const OffersScreen(),
+        "/social_media": (context) => const SocialMediaScreen(),
       },
     );
   }

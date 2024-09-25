@@ -14,12 +14,14 @@ class ReferEarnScreen extends StatefulWidget {
 class _ReferEarnScreenState extends State<ReferEarnScreen>
     with SingleTickerProviderStateMixin {
   String? referCode = "ABC123";
+  String? totalReferrers = "0";
   late TabController _tabController;
 
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       referCode = prefs.getString("referCode");
+      totalReferrers = prefs.getString("totalReferrers");
     });
   }
 
@@ -79,7 +81,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
         controller: _tabController,
         children: [
           _buildInviteTab(buttonWidth, size, referCode),
-          _buildRewardsTab(),
+          _buildRewardsTab(totalReferrers),
         ],
       ),
     );
@@ -115,7 +117,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                     ),
                     padding: const EdgeInsets.all(12.0),
                     child: Text(
-                      "https://cashmonkey.page.link/$referCode",
+                      "$referCode",
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -139,7 +141,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                       onPressed: () async {
                         try {
                           await Share.share(
-                            'Join CashMonkey and start earning rewards with me!',
+                            'Join CashMonkey and start earning rewards with me! \n Refer Code: $referCode',
                           );
                         } catch (e) {
                           print('Error sharing: $e');
@@ -193,7 +195,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
     );
   }
 
-  Widget _buildRewardsTab() {
+  Widget _buildRewardsTab(totalReferrers) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
@@ -211,7 +213,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                 children: [
                   _buildStatItem(
                       Icons.monetization_on, "Referral Earning", "0"),
-                  _buildStatItem(Icons.person, "Total Referrals", "0"),
+                  _buildStatItem(
+                      Icons.person, "Total Referrals", "$totalReferrers"),
                 ],
               ),
             ),

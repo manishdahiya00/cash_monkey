@@ -1,3 +1,4 @@
+import 'package:cash_monkey/screens/refer_code_screen.dart';
 import 'package:cash_monkey/services/auth_service.dart';
 import 'package:cash_monkey/utils/color_theme.dart';
 import 'package:cash_monkey/utils/utils.dart';
@@ -36,7 +37,9 @@ class LoginScreen extends StatelessWidget {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  const ReferCodeScreen()), // Navigate to ReferCodeScreen
         );
       } else {
         print("Error during sign-up: ${response.data['message']}");

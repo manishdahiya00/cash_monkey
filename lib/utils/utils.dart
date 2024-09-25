@@ -13,7 +13,7 @@ class Utils {
     String versionName = 'Unknown';
     String versionCode = 'Unknown';
 
-    String baseUrl = "https://cash-monkey-d4b1d5748d36.herokuapp.com/api/v1/";
+    String baseUrl = "http://192.168.81.141:8000/api/v1/";
 
     if (deviceInfo is AndroidDeviceInfo) {
       deviceId = deviceInfo.model;
