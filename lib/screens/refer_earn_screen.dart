@@ -21,7 +21,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       referCode = prefs.getString("referCode");
-      totalReferrers = prefs.getString("totalReferrers");
+      totalReferrers = prefs.getString("totalReferrers") ?? "0";
     });
   }
 
