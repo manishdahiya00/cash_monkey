@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:cash_monkey/screens/home_screen.dart';
 import 'package:cash_monkey/screens/refer_code_screen.dart';
 import 'package:cash_monkey/services/auth_service.dart';
 import 'package:cash_monkey/utils/color_theme.dart';
@@ -7,10 +10,230 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:advertising_id/advertising_id.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cash_monkey/screens/home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _referCodeController = TextEditingController();
+  bool _isSubmitting = false;
+  String _errorMessage = '';
+
+  void _navigateToHomeScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  }
+
+  Future<void> _submitReferCode() async {
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final dio = Dio();
+      Map<String, String> allInfo = await Utils.collectAllInfo();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userId = prefs.getString('userId');
+      String? securityToken = prefs.getString('token');
+      String versionName = allInfo['versionName'] ?? "";
+      String versionCode = allInfo['versionCode'] ?? "";
+
+      final response = await dio.post(
+        "${allInfo["baseUrl"]}addReferCode",
+        data: {
+          "userId": userId,
+          "securityToken": securityToken,
+          "referCode": _referCodeController.text,
+          "versionName": versionName,
+          "versionCode": versionCode,
+        },
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
+      if (response.statusCode == 201 && response.data["status"] == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Referral code submitted successfully!')),
+        );
+        Navigator.of(context).pop(); // Close the modal
+        _navigateToHomeScreen();
+      } else {
+        // Handle error
+        setState(() {
+          _errorMessage =
+              response.data["message"] ?? 'Failed to submit referral code';
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _errorMessage = 'Failed to submit referral code: $e';
+      });
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  Future<void> _skipReferCode() async {
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final dio = Dio();
+      Map<String, String> allInfo = await Utils.collectAllInfo();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userId = prefs.getString('userId');
+      String? securityToken = prefs.getString('token');
+      String versionName = allInfo['versionName'] ?? "";
+      String versionCode = allInfo['versionCode'] ?? "";
+
+      final response = await dio.post(
+        "${allInfo["baseUrl"]}addReferCode",
+        data: {
+          "userId": userId,
+          "securityToken": securityToken,
+          "referCode": "",
+          "versionName": versionName,
+          "versionCode": versionCode,
+        },
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
+      if (response.statusCode == 201 && response.data["status"] == 200) {
+        Navigator.of(context).pop(); // Close the modal
+        _navigateToHomeScreen();
+      } else {
+        // Handle error
+        setState(() {
+          _errorMessage =
+              response.data["message"] ?? 'Failed to submit referral code';
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _errorMessage = 'Failed to submit referral code: $e';
+      });
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  void showReferCodeModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          minChildSize: 0.2,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return AnimatedPadding(
+              padding: MediaQuery.of(context).viewInsets,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.decelerate,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorTheme.backgroundColor,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(16.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 5,
+                      blurRadius: 10,
+                      offset: Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      top: 16.0,
+                      bottom: max(16.0,
+                          MediaQuery.of(context).viewInsets.bottom + 16.0),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: _referCodeController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            labelText: 'Referral Code',
+                            labelStyle: TextStyle(color: Colors.white),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        ElevatedButton(
+                          onPressed: _isSubmitting ? null : _submitReferCode,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 62, 62, 62),
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            shape: const RoundedRectangleBorder(),
+                          ),
+                          child: _isSubmitting
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Submit',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        TextButton(
+                          onPressed: _isSubmitting ? null : _skipReferCode,
+                          child: const Text(
+                            'Skip',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16.0),
+                          ),
+                        ),
+                        if (_errorMessage.isNotEmpty) ...[
+                          const SizedBox(height: 16.0),
+                          Text(
+                            _errorMessage,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> handleSignIn(BuildContext context) async {
     try {
@@ -35,12 +258,7 @@ class LoginScreen extends StatelessWidget {
         // Call app open API after successful login
         await _callAppOpenAPI(allInfo);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const ReferCodeScreen()), // Navigate to ReferCodeScreen
-        );
+        showReferCodeModal(context);
       } else {
         print("Error during sign-up: ${response.data['message']}");
       }
@@ -142,6 +360,7 @@ class LoginScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: ColorTheme.backgroundColor,
       body: Center(
         child: Padding(

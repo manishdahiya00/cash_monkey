@@ -159,7 +159,6 @@ class _PayoutScreenState extends State<PayoutScreen> {
         ),
         itemCount: widget.payoutItems.length,
         itemBuilder: (context, index) {
-          final title = widget.title;
           final amount = widget.payoutItems[index];
           return InkWell(
             onTap: () {
