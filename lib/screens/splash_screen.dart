@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
     prefs.setString("image", data['image'].toString());
     prefs.setString("email", data['email'].toString());
     prefs.setString("referCode", data['referCode']);
-    prefs.setInt("referCount", data['totalReferrers']);
+    prefs.setInt("referCount", data['referCount']);
   }
 
   void _navigateToHomeOrLogin({required bool isLoggedIn}) {

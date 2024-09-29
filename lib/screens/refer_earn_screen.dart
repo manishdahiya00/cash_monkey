@@ -14,7 +14,7 @@ class ReferEarnScreen extends StatefulWidget {
 class _ReferEarnScreenState extends State<ReferEarnScreen>
     with SingleTickerProviderStateMixin {
   String? referCode = "ABC123";
-  int referCount = 10;
+  int referCount = 0;
   late TabController _tabController;
 
   Future<void> getData() async {
