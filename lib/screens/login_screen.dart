@@ -69,8 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Handle error
         setState(() {
-          _errorMessage =
-              response.data["message"] ?? 'Failed to submit referral code';
+          _errorMessage = 'Invalid Refer Code';
         });
       }
     } catch (e) {
@@ -120,8 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Handle error
         setState(() {
-          _errorMessage =
-              response.data["message"] ?? 'Failed to submit referral code';
+          _errorMessage = response.data["message"];
         });
       }
     } catch (e) {
@@ -156,13 +154,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: ColorTheme.backgroundColor,
                   borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16.0)),
+                      const BorderRadius.vertical(top: Radius.circular(16.0)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       spreadRadius: 5,
                       blurRadius: 10,
-                      offset: Offset(0, -2),
+                      offset: const Offset(0, -2),
                     ),
                   ],
                 ),
@@ -254,12 +252,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 201 && response.data["status"] == 200) {
         await _storeUserData(response.data);
-
+        print(response.data);
         // Call app open API after successful login
         await _callAppOpenAPI(allInfo);
 
-        showReferCodeModal(context);
+        if (response.data["isReferCode"] == true) {
+          showReferCodeModal(context);
+        } else {
+          _navigateToHomeScreen();
+        }
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error : ${response.data["message"]}')),
+        );
         print("Error during sign-up: ${response.data['message']}");
       }
     } catch (error) {
@@ -295,6 +300,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 201 && response.data["status"] == 200) {
         await _saveUserData(prefs, response.data);
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error : ${response.data["message"]}')),
+        );
         print("Error during app open API call: ${response.data['message']}");
       }
     } catch (error) {
@@ -309,6 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString("image", data['image'].toString());
     prefs.setString("email", data['email'].toString());
     prefs.setString("referCode", data['referCode'].toString());
+    prefs.setInt("referCount", data['referCount']);
   }
 
   Future<String> _getAdvertisingId() async {

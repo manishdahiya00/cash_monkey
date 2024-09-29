@@ -14,14 +14,14 @@ class ReferEarnScreen extends StatefulWidget {
 class _ReferEarnScreenState extends State<ReferEarnScreen>
     with SingleTickerProviderStateMixin {
   String? referCode = "ABC123";
-  String? totalReferrers = "0";
+  int referCount = 10;
   late TabController _tabController;
 
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       referCode = prefs.getString("referCode");
-      totalReferrers = prefs.getString("totalReferrers") ?? "0";
+      referCount = prefs.getInt("referCount") ?? 0;
     });
   }
 
@@ -81,7 +81,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
         controller: _tabController,
         children: [
           _buildInviteTab(buttonWidth, size, referCode),
-          _buildRewardsTab(totalReferrers),
+          _buildRewardsTab(referCount),
         ],
       ),
     );
@@ -179,8 +179,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
             _buildStep(
               icon: Icons.attach_money,
               title: "What will I get?",
-              description:
-                  "You will get 50% lifetime commission on your friend's earnings.",
+              description: "You will get 500 coins when your friend signup.",
             ),
             const SizedBox(height: 20),
             _buildStep(
@@ -211,8 +210,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildStatItem(
-                      Icons.monetization_on, "Referral Earning", "0"),
+                  _buildStatItem(Icons.monetization_on, "Referral Earning",
+                      "${totalReferrers * 500}"),
                   _buildStatItem(
                       Icons.person, "Total Referrals", "$totalReferrers"),
                 ],
@@ -318,14 +317,16 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
   }
 
   Widget _buildRewardItem(int invites, String reward) {
+    // Check if the reward is unlocked
+    bool isUnlocked = (referCount ?? 0) >= invites;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.radio_button_unchecked,
-            color: Colors.greenAccent,
+          Icon(
+            isUnlocked ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: isUnlocked ? Colors.green : Colors.greenAccent,
             size: 24,
           ),
           const SizedBox(width: 16),
@@ -335,8 +336,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
             children: [
               Text(
                 "Unlock at $invites invites",
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: isUnlocked ? Colors.green : Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -348,12 +349,15 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.greenAccent, width: 1),
+                  border: Border.all(
+                    color: isUnlocked ? Colors.green : Colors.greenAccent,
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   reward,
-                  style: const TextStyle(
-                    color: Colors.greenAccent,
+                  style: TextStyle(
+                    color: isUnlocked ? Colors.green : Colors.greenAccent,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -368,14 +372,16 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
 
   Widget _buildRewardItemWithImage(
       int invites, String reward, String image, String desc) {
+    bool isUnlocked = referCount >= invites;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.radio_button_unchecked,
-            color: Colors.greenAccent,
+          Icon(
+            isUnlocked ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: isUnlocked ? Colors.green : Colors.greenAccent,
             size: 24,
           ),
           const SizedBox(width: 16),
@@ -384,8 +390,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
             children: [
               Text(
                 "Unlock at $invites invites",
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: isUnlocked ? Colors.green : Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -397,7 +403,10 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.greenAccent, width: 1),
+                  border: Border.all(
+                    color: isUnlocked ? Colors.green : Colors.greenAccent,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -415,8 +424,10 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                         children: [
                           Text(
                             reward,
-                            style: const TextStyle(
-                              color: Colors.greenAccent,
+                            style: TextStyle(
+                              color: isUnlocked
+                                  ? Colors.green
+                                  : Colors.greenAccent,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -424,8 +435,8 @@ class _ReferEarnScreenState extends State<ReferEarnScreen>
                           Sizes.verticalSpacing(5),
                           Text(
                             desc,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 92, 204, 150),
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 92, 204, 150),
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
